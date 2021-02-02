@@ -30,6 +30,7 @@ display: flex;
 align-items: center;
 justify-content: space-around;
 background: #0091AD;
+
 `
 
 const gridReducer = (grid, action) => {
@@ -98,7 +99,7 @@ const Grid = ({ rowsCount, colsCount }) => {
     <>
       <StyledControls><button onClick={() => dispatch({ type: "nextGen" })}>next Generation</button>
         <button onClick={() => dispatch({ type: "randomGrid" })}>random Grid</button>
-        {alive ? <FaPause onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} /> : <FaPlay onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} />}
+        {alive ? <FaPause color="white" onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} /> : <FaPlay color="white" onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} />}
 
         <input id="typeinp" onChange={e => { setSpeed(2000 - e.target.value); speedRef.current = 2000 - e.target.value; console.log(speedRef.current) }} type="range" min="0" max="1950" defaultValue="0" step="50" /></StyledControls>
       <StyledGrid rowsCount={rowsCount} colsCount={colsCount}>
