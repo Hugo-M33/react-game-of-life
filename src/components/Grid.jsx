@@ -64,8 +64,13 @@ const gridReducer = (grid, action) => {
       for (let i = 0; i < 30; i++) {
         randGrid.push(Array.from(Array(50), () => Math.floor(Math.random() * Math.floor(2)) ? true : false));
       }
-      console.log(randGrid);
       return randGrid;
+    case "emptyGrid":
+      const emptyGrid = [];
+      for (let i = 0; i < grid.length; i++) {
+        emptyGrid.push(Array.from(Array(50), () => false));
+      }
+      return emptyGrid;
   }
 }
 
@@ -99,7 +104,8 @@ const Grid = ({ rowsCount, colsCount }) => {
     <>
       <StyledControls><button onClick={() => dispatch({ type: "nextGen" })}>next Generation</button>
         <button onClick={() => dispatch({ type: "randomGrid" })}>random Grid</button>
-        {alive ? <FaPause color="white" onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} /> : <FaPlay color="white" onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} />}
+        <button onClick={() => dispatch({ type: "emptyGrid" })}>Clear</button>
+        {alive ? <FaPause style={{cursor: "pointer", color: "white"}} onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} /> : <FaPlay style={{cursor: "pointer",color: "white"}}  onClick={() => { setAlive(!alive); aliveRef.current = !alive; live() }} size={32} />}
 
         <input id="typeinp" onChange={e => { setSpeed(2000 - e.target.value); speedRef.current = 2000 - e.target.value; console.log(speedRef.current) }} type="range" min="0" max="1950" defaultValue="0" step="50" /></StyledControls>
       <StyledGrid rowsCount={rowsCount} colsCount={colsCount}>
