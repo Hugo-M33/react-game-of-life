@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import Cell from "./Cell";
@@ -23,36 +23,66 @@ const StyledCell = styled(Cell)`
   background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
 `;
 
+const gridReducer = (grid, action) => {
+  switch(action.type) {
+    case "toggleCell":
+      return produce(grid, gridCopy => {
+        gridCopy[action.payload.row][action.payload.column] = !grid[action.payload.row][action.payload.column];
+      });
+      case "nextGen":
+          const newGrid = [];
+          for (let x = 0; x < 30; x++) {
+            newGrid.push(Array.from(Array(50), () => undefined));
+          }
+          grid.forEach((row, i) => {
+            row.forEach((cell, j) => {
+              let neighboursCount = 0
+              for (let nI = i-1; nI <= i+1; nI++) {
+                for (let nJ = j-1; nJ <= j+1; nJ++) {
+                  if (nI >= 0 && nI < 30 && nJ >= 0 && nJ < 50 && grid[nI][nJ] && (`${nI}-${nJ}` !== `${i}-${j}`)) {neighboursCount++}
+                }
+                
+              }
+              if (neighboursCount === 3 && !grid[i][j]) {newGrid[i][j] = true}
+              else if (neighboursCount >= 2 && neighboursCount <= 3 && grid[i][j]) {newGrid[i][j] = true}
+              else {newGrid[i][j] = false}
+            })
+          })
+        return newGrid;
+      }
+}
+
 const Grid = ({ rowsCount, colsCount }) => {
-  const [grid, setGrid] = useState(() => {
+
+  const initialGrid = () => {
     const rows = [];
     for (let i = 0; i < rowsCount; i++) {
       rows.push(Array.from(Array(colsCount), () => false));
     }
     console.log(rows);
     return rows;
-  });
+  }
 
-  const toggleCell = (row, column) => {
-    setGrid(
-      produce(grid, (gridCopy) => {
-        gridCopy[row][column] = !grid[row][column];
-      })
-    );
-  };
+  const [grid, dispatch] = useReducer(gridReducer, initialGrid())
+  console.log(grid);
 
   return (
+    <>
     <StyledGrid rowsCount={rowsCount} colsCount={colsCount}>
-      {grid.map((columns, i) =>
-        columns.map((cell, j) => (
+      {grid.map((rows, i) =>
+        rows.map((cell, j) => (
           <Cell
             key={`${i}-${j}`}
+            row={i}
+            column={j}
             value={grid[i][j]}
-            toggleCell={() => toggleCell(i, j)}
+            dispatch={dispatch}
           ></Cell>
         ))
       )}
     </StyledGrid>
+    <button onClick={() => dispatch({type: "nextGen"})}>nextGen</button>
+    </>
   );
 };
 
